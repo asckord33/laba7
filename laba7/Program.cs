@@ -35,6 +35,9 @@ class Program
                 case "2":
                     RunTask("Очередь (Queue)", Task2);
                     break;
+                case "3":
+                    RunTask("Решение уравнений", Task3);
+                    break;
                 default:
                     Console.WriteLine("Неверный выбор! Нажмите любую клавишу для продолжения...");
                     Console.ReadKey();
@@ -158,5 +161,83 @@ class Program
             }
         }
     }
+
+    // Задача 3: Решение уравнений (params)
+
+    static void Task3()
+    {
+        Console.Write("Введите коэффициенты уравнения через пробел (1-3 числа): ");
+        string? input = Console.ReadLine();
+        if (string.IsNullOrEmpty(input)) return;
+
+        string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        double[] coefficients = new double[parts.Length];
+        for (int i = 0; i < parts.Length; i++)
+        {
+            coefficients[i] = double.Parse(parts[i]);
+        }
+
+        double[] roots = Solve(coefficients);
+        Console.Write("Корни уравнения: ");
+        Print(roots);
+    }
+
+    static double[] Solve(params double[] coefficients)
+    {
+
+        if (coefficients.Length == 3)
+        {
+            double a = coefficients[0];
+            double b = coefficients[1];
+            double c = coefficients[2];
+            double discriminant = b * b - 4 * a * c;
+
+            if (a == 0)
+            {
+                if (b == 0) return new double[0];
+                return new double[] { -c / b };
+            }
+            if (discriminant < 0) return new double[0];
+            if (Math.Abs(discriminant) < 1e-10) return new double[] { -b / (2 * a) };
+
+            double sqrtD = Math.Sqrt(discriminant);
+            double x1 = (-b - sqrtD) / (2 * a);
+            double x2 = (-b + sqrtD) / (2 * a);
+            return new double[] { Math.Min(x1, x2), Math.Max(x1, x2) };
+        }
+
+        else if (coefficients.Length == 2)
+        {
+            double b = coefficients[0];
+            double c = coefficients[1];
+            if (Math.Abs(b) < 1e-10) return new double[0];
+            return new double[] { -c / b };
+        }
+
+        else if (coefficients.Length == 1)
+        {
+            double c = coefficients[0];
+            if (Math.Abs(c) < 1e-10) return new double[] { 0 };
+            return new double[0];
+        }
+        return new double[0];
+    }
+
+    static void Print(params double[] roots)
+    {
+        if (roots.Length == 0)
+        {
+            Console.WriteLine("нет корней");
+            return;
+        }
+
+        Array.Sort(roots);
+        for (int i = 0; i < roots.Length; i++)
+        {
+            Console.Write(roots[i].ToString("0.##") + (i == roots.Length - 1 ? "" : " "));
+        }
+        Console.WriteLine();
+    }
+
 
 }
