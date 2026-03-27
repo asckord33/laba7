@@ -50,6 +50,12 @@ class Program
                 case "7":
                     RunTask("Компоненты связности", Task7);
                     break;
+                case "8":
+                    RunTask("Кафе (Купоны)", Task8);
+                    break;
+                case "0":
+                    Console.WriteLine("Программа завершена. До свидания!");
+                    return;
                 default:
                     Console.WriteLine("Неверный выбор! Нажмите любую клавишу для продолжения...");
                     Console.ReadKey();
@@ -452,6 +458,102 @@ class Program
         {
             if (!visited[neighbor])
                 DFS(neighbor, graph, visited, component);
+        }
+    }
+    // Задача 8: Кафе (Купоны)
+
+    static void Task8()
+    {
+        Console.Write("Введите количество дней N: ");
+        string? nInput = Console.ReadLine();
+        if (string.IsNullOrEmpty(nInput)) return;
+
+        int N = int.Parse(nInput);
+        int[] prices = new int[N + 1];
+
+        Console.WriteLine($"Введите стоимость обедов на {N} дней (каждое число с новой строки):");
+        for (int i = 1; i <= N; i++)
+        {
+            string? priceInput = Console.ReadLine();
+            if (string.IsNullOrEmpty(priceInput)) return;
+            prices[i] = int.Parse(priceInput);
+        }
+
+
+        int MAX_COUPONS = N + 5;
+        int INF = int.MaxValue / 2;
+
+        int[,] dp = new int[N + 2, MAX_COUPONS + 2];
+        bool[,] usedCoupon = new bool[N + 2, MAX_COUPONS + 2];
+
+        for (int i = 0; i <= N + 1; i++)
+            for (int j = 0; j <= MAX_COUPONS; j++)
+                dp[i, j] = INF;
+
+        dp[0, 0] = 0;
+
+        for (int i = 1; i <= N; i++)
+        {
+            for (int j = 0; j <= N; j++)
+            {
+                if (dp[i - 1, j] >= INF) continue;
+
+
+                int cost = prices[i];
+                int newCoupons = j;
+                if (cost > 100) newCoupons++;
+
+                if (dp[i, newCoupons] > dp[i - 1, j] + cost)
+                {
+                    dp[i, newCoupons] = dp[i - 1, j] + cost;
+                    usedCoupon[i, newCoupons] = false;
+                }
+
+
+                if (j > 0)
+                {
+                    if (dp[i, j - 1] > dp[i - 1, j])
+                    {
+                        dp[i, j - 1] = dp[i - 1, j];
+                        usedCoupon[i, j - 1] = true;
+                    }
+                }
+            }
+        }
+
+        int minCost = INF;
+        int bestCoupons = 0;
+        for (int j = 0; j <= N; j++)
+        {
+            if (dp[N, j] < minCost)
+            {
+                minCost = dp[N, j];
+                bestCoupons = j;
+            }
+            else if (dp[N, j] == minCost && j > bestCoupons)
+            {
+                bestCoupons = j;
+            }
+        }
+
+        List<int> couponDays = new List<int>();
+        int curJ = bestCoupons;
+        for (int i = N; i >= 1; i--)
+        {
+            if (usedCoupon[i, curJ])
+            {
+                couponDays.Add(i);
+                curJ++;
+            }
+        }
+        couponDays.Reverse();
+
+        int usedCouponsCount = couponDays.Count;
+        Console.WriteLine($"Минимальная стоимость: {minCost}");
+        Console.WriteLine($"Осталось купонов: {bestCoupons}, Использовано купонов: {usedCouponsCount}");
+        if (usedCouponsCount > 0)
+        {
+            Console.WriteLine($"Дни использования купонов: {string.Join(", ", couponDays)}");
         }
     }
 }
