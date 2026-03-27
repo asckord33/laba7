@@ -41,6 +41,9 @@ class Program
                 case "4":
                     RunTask("Карточная игра", Task4);
                     break;
+                case "5":
+                    RunTask("Класс Rectangle", Task5);
+                    break;
                 default:
                     Console.WriteLine("Неверный выбор! Нажмите любую клавишу для продолжения...");
                     Console.ReadKey();
@@ -292,5 +295,51 @@ class Program
             Console.WriteLine("first " + moves);
     }
 
+    // Задача 5: Класс Rectangle
+
+    class Rectangle
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public Rectangle(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public int GetArea()
+        {
+            return Width * Height;
+        }
+
+        public int GetPerimeter()
+        {
+            return 2 * (Width + Height);
+        }
+
+        public override string ToString()
+        {
+            return $"Rectangle {Width}x{Height}";
+        }
+    }
+
+    static void Task5()
+    {
+        Console.Write("Введите ширину и высоту прямоугольника (через пробел): ");
+        string? input = Console.ReadLine();
+        if (string.IsNullOrEmpty(input)) return;
+
+        string[] inputParts = input.Split(' ');
+        if (inputParts.Length < 2) return;
+
+        int w = int.Parse(inputParts[0]);
+        int h = int.Parse(inputParts[1]);
+
+        Rectangle rect = new Rectangle(w, h);
+        Console.WriteLine($"Площадь: {rect.GetArea()}");
+        Console.WriteLine($"Периметр: {rect.GetPerimeter()}");
+        Console.WriteLine(rect.ToString());
+    }
 
 }
