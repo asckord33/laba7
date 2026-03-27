@@ -47,6 +47,9 @@ class Program
                 case "6":
                     RunTask("Минимальный вес еды", Task6);
                     break;
+                case "7":
+                    RunTask("Компоненты связности", Task7);
+                    break;
                 default:
                     Console.WriteLine("Неверный выбор! Нажмите любую клавишу для продолжения...");
                     Console.ReadKey();
@@ -389,5 +392,66 @@ class Program
         }
 
         Console.WriteLine($"Минимальный вес еды: {dp[N - 1, M - 1]}");
+    }
+
+    // Задача 7: Компоненты связности (DFS)
+
+    static void Task7()
+    {
+        Console.Write("Введите количество вершин N и ребер M (через пробел): ");
+        string? nmInput = Console.ReadLine();
+        if (string.IsNullOrEmpty(nmInput)) return;
+
+        string[] nm = nmInput.Split(' ');
+        int N = int.Parse(nm[0]);
+        int M = int.Parse(nm[1]);
+
+        List<int>[] graph = new List<int>[N + 1];
+        for (int i = 1; i <= N; i++)
+            graph[i] = new List<int>();
+
+        Console.WriteLine($"Введите {M} ребер (по два числа через пробел):");
+        for (int i = 0; i < M; i++)
+        {
+            string? edgeInput = Console.ReadLine();
+            if (string.IsNullOrEmpty(edgeInput)) return;
+
+            string[] edge = edgeInput.Split(' ');
+            int u = int.Parse(edge[0]);
+            int v = int.Parse(edge[1]);
+            graph[u].Add(v);
+            graph[v].Add(u);
+        }
+
+        bool[] visited = new bool[N + 1];
+        List<List<int>> components = new List<List<int>>();
+
+        for (int i = 1; i <= N; i++)
+        {
+            if (!visited[i])
+            {
+                List<int> comp = new List<int>();
+                DFS(i, graph, visited, comp);
+                components.Add(comp);
+            }
+        }
+
+        Console.WriteLine($"Количество компонент связности: {components.Count}");
+        for (int i = 0; i < components.Count; i++)
+        {
+            Console.WriteLine($"Компонента {i + 1}: {components[i].Count} вершин(ы)");
+            Console.WriteLine($"Вершины: {string.Join(" ", components[i])}");
+        }
+    }
+
+    static void DFS(int v, List<int>[] graph, bool[] visited, List<int> component)
+    {
+        visited[v] = true;
+        component.Add(v);
+        foreach (int neighbor in graph[v])
+        {
+            if (!visited[neighbor])
+                DFS(neighbor, graph, visited, component);
+        }
     }
 }
