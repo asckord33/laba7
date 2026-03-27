@@ -38,6 +38,9 @@ class Program
                 case "3":
                     RunTask("Решение уравнений", Task3);
                     break;
+                case "4":
+                    RunTask("Карточная игра", Task4);
+                    break;
                 default:
                     Console.WriteLine("Неверный выбор! Нажмите любую клавишу для продолжения...");
                     Console.ReadKey();
@@ -237,6 +240,56 @@ class Program
             Console.Write(roots[i].ToString("0.##") + (i == roots.Length - 1 ? "" : " "));
         }
         Console.WriteLine();
+    }
+
+    // Задача 4: Карточная игра (Queue)
+
+    static void Task4()
+    {
+        Console.Write("Введите карты первого игрока (3 числа через пробел): ");
+        string? firstInput = Console.ReadLine();
+
+        Console.Write("Введите карты второго игрока (3 числа через пробел): ");
+        string? secondInput = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(firstInput) || string.IsNullOrEmpty(secondInput)) return;
+
+        string[] firstCards = firstInput.Split(' ');
+        string[] secondCards = secondInput.Split(' ');
+
+        Queue<int> first = new Queue<int>();
+        Queue<int> second = new Queue<int>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            first.Enqueue(int.Parse(firstCards[i]));
+            second.Enqueue(int.Parse(secondCards[i]));
+        }
+
+        int moves = 0;
+
+        while (moves < 100 && first.Count > 0 && second.Count > 0)
+        {
+            moves++;
+            int card1 = first.Dequeue();
+            int card2 = second.Dequeue();
+
+            if (card1 > card2)
+            {
+                first.Enqueue(card1);
+                first.Enqueue(card2);
+            }
+            else
+            {
+                second.Enqueue(card1);
+                second.Enqueue(card2);
+            }
+        }
+
+        if (first.Count == 0)
+            Console.WriteLine("second " + moves);
+        else
+            Console.WriteLine("first " + moves);
     }
 
 
