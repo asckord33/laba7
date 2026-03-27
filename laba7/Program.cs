@@ -44,6 +44,9 @@ class Program
                 case "5":
                     RunTask("Класс Rectangle", Task5);
                     break;
+                case "6":
+                    RunTask("Минимальный вес еды", Task6);
+                    break;
                 default:
                     Console.WriteLine("Неверный выбор! Нажмите любую клавишу для продолжения...");
                     Console.ReadKey();
@@ -342,4 +345,49 @@ class Program
         Console.WriteLine(rect.ToString());
     }
 
+    // Задача 6: Минимальный вес еды (Динамика)
+
+    static void Task6()
+    {
+        Console.Write("Введите размеры таблицы N и M (через пробел): ");
+        string? nmInput = Console.ReadLine();
+        if (string.IsNullOrEmpty(nmInput)) return;
+
+        string[] nm = nmInput.Split(' ');
+        int N = int.Parse(nm[0]);
+        int M = int.Parse(nm[1]);
+
+        int[,] grid = new int[N, M];
+        Console.WriteLine($"Введите {N} строк по {M} чисел:");
+        for (int i = 0; i < N; i++)
+        {
+            string? rowInput = Console.ReadLine();
+            if (string.IsNullOrEmpty(rowInput)) return;
+
+            string[] row = rowInput.Split(' ');
+            for (int j = 0; j < M; j++)
+            {
+                grid[i, j] = int.Parse(row[j]);
+            }
+        }
+
+        int[,] dp = new int[N, M];
+        dp[0, 0] = grid[0, 0];
+
+        for (int j = 1; j < M; j++)
+            dp[0, j] = dp[0, j - 1] + grid[0, j];
+
+        for (int i = 1; i < N; i++)
+            dp[i, 0] = dp[i - 1, 0] + grid[i, 0];
+
+        for (int i = 1; i < N; i++)
+        {
+            for (int j = 1; j < M; j++)
+            {
+                dp[i, j] = Math.Min(dp[i - 1, j], dp[i, j - 1]) + grid[i, j];
+            }
+        }
+
+        Console.WriteLine($"Минимальный вес еды: {dp[N - 1, M - 1]}");
+    }
 }
